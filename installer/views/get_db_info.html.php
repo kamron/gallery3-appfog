@@ -5,6 +5,19 @@
   and info about your MySQL database.
 </p>
 
+<?php
+// Pull data from the environment variable VCAP_SERVICES
+// !! Make sure there is a MySQL service bound to your app!!
+$services_json = json_decode(getenv("VCAP_SERVICES"),true);
+$mysql_config = $services_json["mysql-5.1"][0]["credentials"];
+$username = $mysql_config["username"];
+$password = $mysql_config["password"];
+$hostname = $mysql_config["hostname"];
+$port = $mysql_config["port"];
+$db = $mysql_config["name"];
+$link = mysql_connect("$hostname:$port", $username, $password);
+$db_selected = mysql_select_db($db, $link);
+?>
 
 <fieldset class="<?= installer::var_writable() ? 'success' : 'error' ?>">
   <legend>Photo Storage</legend>
@@ -43,7 +56,7 @@
           Database name
         </td>
         <td>
-          <input name="dbname" value="gallery3"/>
+          <input name="dbname" value="<?php echo $db ?>"/>
         </td>
       </tr>
       <tr>
@@ -51,7 +64,7 @@
           User
         </td>
         <td>
-          <input name="dbuser" value="root"/>
+          <input name="dbuser" value="<?php echo $username ?>"/>
         </td>
       </tr>
       <tr>
@@ -59,7 +72,7 @@
           Password
         </td>
         <td>
-          <input name="dbpass" value=""/>
+          <input name="dbpass" value="<?php echo $password ?>"/>
         </td>
       </tr>
       <tr>
@@ -67,7 +80,7 @@
           Host
         </td>
         <td>
-          <input name="dbhost" value="localhost"/>
+          <input name="dbhost" value="<?php echo $hostname ?>"/>
         </td>
       </tr>
       <tr>
